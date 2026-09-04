@@ -536,6 +536,7 @@ const struct c_common_resword c_common_reswords[] =
   { "extern",		RID_EXTERN,	0 },
   { "false",		RID_FALSE,	D_C23 | D_CXXWARN },
   { "float",		RID_FLOAT,	0 },
+  { "cplong",               RID_CPLONG,     0 },
   { "for",		RID_FOR,	0 },
   { "friend",		RID_FRIEND,	D_CXXONLY | D_CXXWARN },
   { "goto",		RID_GOTO,	0 },
