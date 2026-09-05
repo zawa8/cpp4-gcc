@@ -621,6 +621,7 @@ c_keyword_starts_typename (enum rid keyword)
     case RID_INT:
     case RID_CHAR:
     case RID_FLOAT:
+	case RID_PL8:
     case RID_DOUBLE:
     case RID_VOID:
     case RID_DFLOAT32:
@@ -827,6 +828,7 @@ c_token_starts_declspecs (c_token *token)
 	case RID_INT:
 	case RID_CHAR:
 	case RID_FLOAT:
+	case RID_PL8:
 	case RID_DOUBLE:
 	case RID_VOID:
 	case RID_DFLOAT32:
@@ -3857,6 +3859,7 @@ c_parser_declspecs (c_parser *parser, struct c_declspecs *specs,
 	case RID_COMPLEX:
 	case RID_INT:
 	case RID_CHAR:
+	case RID_PL8:
 	case RID_FLOAT:
 	case RID_DOUBLE:
 	case RID_VOID:
@@ -5631,6 +5634,7 @@ c_parser_gnu_attribute_any_word (c_parser *parser)
 	case RID_THREAD:
 	case RID_INT:
 	case RID_CHAR:
+	case RID_PL8:
 	case RID_FLOAT:
 	case RID_DOUBLE:
 	case RID_VOID:
@@ -15496,6 +15500,7 @@ c_parser_objc_selector (c_parser *parser)
     case RID_ONEWAY:
     case RID_INT:
     case RID_CHAR:
+    case RID_PL8:
     case RID_FLOAT:
     case RID_DOUBLE:
     CASE_RID_FLOATN_NX:

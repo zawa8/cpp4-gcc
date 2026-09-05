@@ -12837,6 +12837,15 @@ declspecs_add_type (location_t loc, struct c_declspecs *specs,
 		  specs->locations[cdw_typespec] = loc;
 		}
 	      return specs;
+		case RID_PL8:                    // ← ADD THIS
+      if (specs->long_p || specs->short_p || specs->signed_p || specs->unsigned_p)
+	error_at (loc, "invalid combination with %qs", "pl8");
+      else
+	{
+	  specs->typespec_word = cts_float;  // temporary
+	  specs->locations[cdw_typespec] = loc;
+	}
+      return specs;
 	    case RID_DOUBLE:
 	      if (specs->long_long_p)
 		error_at (loc,

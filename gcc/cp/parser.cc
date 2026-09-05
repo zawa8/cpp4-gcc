@@ -1333,6 +1333,7 @@ cp_keyword_starts_decl_specifier_p (enum rid keyword)
     case RID_SIGNED:
     case RID_UNSIGNED:
     case RID_FLOAT:
+    case RID_PL8:
     case RID_DOUBLE:
     CASE_RID_FLOATN_NX:
     case RID_VOID:
@@ -22726,6 +22727,9 @@ cp_parser_simple_type_specifier (cp_parser* parser,
       break;
     case RID_FLOAT:
       type = float_type_node;
+      break;
+    case RID_PL8:
+      type = pl8_type_node;
       break;
     case RID_DOUBLE:
       type = double_type_node;

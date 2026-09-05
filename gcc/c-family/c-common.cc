@@ -536,7 +536,7 @@ const struct c_common_resword c_common_reswords[] =
   { "extern",		RID_EXTERN,	0 },
   { "false",		RID_FALSE,	D_C23 | D_CXXWARN },
   { "float",		RID_FLOAT,	0 },
-  { "cplong",               RID_CPLONG,     0 },
+  { "pl8",      RID_PL8, 0 },
   { "for",		RID_FOR,	0 },
   { "friend",		RID_FRIEND,	D_CXXONLY | D_CXXWARN },
   { "goto",		RID_GOTO,	0 },
@@ -4585,6 +4585,7 @@ c_common_nodes_and_builtins (void)
     TREE_TYPE (identifier_global_value (get_identifier (PID_TYPE)));
 
   record_builtin_type (RID_FLOAT, NULL, float_type_node);
+  record_builtin_type (RID_PL8, NULL, float_type_node); 
   record_builtin_type (RID_DOUBLE, NULL, double_type_node);
   record_builtin_type (RID_MAX, "long double", long_double_type_node);
 
@@ -9340,6 +9341,7 @@ keyword_begins_type_specifier (enum rid keyword)
     case RID_INT:
     case RID_CHAR:
     case RID_FLOAT:
+    case RID_PL8:
     case RID_DOUBLE:
     case RID_VOID:
     case RID_UNSIGNED:
