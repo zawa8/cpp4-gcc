@@ -9859,7 +9859,15 @@ build_common_tree_nodes (bool signed_char)
   TYPE_PRECISION (float_type_node)
     = GET_MODE_PRECISION (float_type_mode).to_constant ();
   layout_type (float_type_node);
-
+  
+  pl8_type_node = make_node (REAL_TYPE);
+  machine_mode pl8_type_mode             
+    = targetm.c.mode_for_floating_type (TI_FLOAT_TYPE);
+  SET_TYPE_MODE (pl8_type_node, pl8_type_mode);
+  TYPE_PRECISION (pl8_type_node)         
+    = GET_MODE_PRECISION (pl8_type_mode).to_constant ();
+  layout_type (pl8_type_node);
+  
   double_type_node = make_node (REAL_TYPE);
   machine_mode double_type_mode
     = targetm.c.mode_for_floating_type (TI_DOUBLE_TYPE);
