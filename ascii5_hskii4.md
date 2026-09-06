@@ -2,7 +2,7 @@
 
 ## Complete Mapping Table
 
-| kod | ascii | hskii | continuous | Meaning |
+| kod | ascii5 | hskii5 | 4fskii | 4fskii_meaning |
 |-----|-------|-------|------------|---------|
 | 48 | 0 | 0 | 0 | digit |
 | 49 | 1 | 1 | 1 | digit |
@@ -14,12 +14,12 @@
 | 55 | 7 | 7 | 7 | digit |
 | 56 | 8 | 8 | 8 | digit |
 | 57 | 9 | 9 | 9 | digit |
-| 58 | : | : | L | hex ten (10) |
-| 59 | ; | ; | Y | hex yilewen (11) |
-| 60 | < | < | V | hex twelw (12) |
-| 61 | = | = | W | hex dblun (13) |
-| 62 | > | > | P | hex purxn (14) |
-| 63 | ? | ? | F | hex fiwxn (15) |
+| 58 | : | : | L | heks ten (8+2) |
+| 59 | ; | ; | Y | heks yilewen(8+3) |
+| 60 | < | < | V | heks twelw (8+4) |
+| 61 | = | = | W | heks dblun (8+5) |
+| 62 | > | > | P | heks purn (8+6) |
+| 63 | ? | ? | F | heks fiwxn (8+7) |
 | 64 | @ | @ | _ | xndxrskor |
 | 65 | A | A | x | अ (schwa) |
 | 66 | B | B | a | ा (aa matra) |
@@ -34,8 +34,8 @@
 | 75 | K | K | G | घ (gha) |
 | 76 | L | L | c | च (cha) |
 | 77 | M | M | C | छ (chha) |
-| 78 | N | N | z | ज (ja) |
-| 79 | O | O | Z | झ (jha) |
+| 78 | N | N | z | ज (za) |
+| 79 | O | O | Z | झ (zha) |
 | 80 | P | P | t | ट (ta) |
 | 81 | Q | Q | T | ठ (tha) |
 | 82 | R | R | d | ड (da) |
@@ -58,29 +58,29 @@
 | 99 | c | c | s | स (sa) |
 | 100 | d | d | S | श (sha) |
 | 101 | e | e | v | ह (ha) |
-| 102 | f | f | == | is-equal-to |
-| 103 | g | g | != | not-equal-to |
-| 104 | h | h | >= | greater-equal |
-| 105 | i | i | <= | less-equal |
-| 106 | j | j | && | logical-and |
-| 107 | k | k | || | logical-or |
-| 108 | l | l | ++ | increment |
-| 109 | m | m | -- | decrement |
-| 110 | n | n | @ | at-sign |
-| 111 | o | o | # | hash |
-| 112 | p | p | $ | dollar |
-| 113 | q | q | % | percent |
-| 114 | r | r | & | ampersand |
-| 115 | s | s | * | asterisk |
+| 102 | f | f |  is-equal-to-glyph | == |
+| 103 | g | g | not-equal-to-glyph | != |
+| 104 | h | h | greater-equal-glyph | >= |
+| 105 | i | i | less-equal-glyph | <= |
+| 106 | j | j | logical-and-glyph | && |
+| 107 | k | k | logical-or-glyph | dbl_paip |
+| 108 | l | l | increment-glyph | ++ |
+| 109 | m | m | decrement-glyph | -- |
+| 110 | n | n | at-sign-glyph | @ |
+| 111 | o | o | hash-glyph | # |
+| 112 | p | p | dollar-glyph | $ |
+| 113 | q | q | percent-glyph | % |
+| 114 | r | r | ampersand-glyph | & |
+| 115 | s | s | asterisk_glyph | asterisk(*) |
 | 116 | t | t | + | plus |
 | 117 | u | u | - | minus |
-| 118 | v | v | = | equals |
+| 118 | v | v | ekuals_glyph | ekuals |
 | 119 | w | w | / | slash |
 | 120 | x | x | \ | backslash |
-| 121 | y | y | | | pipe |
+| 121 | y | y | paip_glyph | pipe |
 | 122 | z | z | ~ | tilde |
 | 123 | { | { | ( | left-paren |
-| 124 | | | | | ) | right-paren |
+| 124 | paip_glyph | paip_glyph | ) | right-paren |
 | 125 | } | } | [ | left-bracket |
 | 126 | ~ | ~ | ] | right-bracket |
 | 127 | | | { } | braces |
@@ -97,10 +97,16 @@
 | o | ो | matra |
 | N | ं | anusvara |
 
+### dn " @ # $ % & * + - = \ / |  ~ ( ) [ ] "
+
+### pending  [ \ ] ^ _ `  : ; < = > ? @
+
+### aal  ( : ; < = > ? ) ( _ - @) 
+
 ## Key Features
 
 1. Complete Hindi phoneme coverage
-2. Dedicated hex digits (L,Y,V,W,P,F)
+2. Dedicated heks digits (L,Y,V,W,P,F)
 3. Programming symbols at 102-109
 4. All ASCII symbols remapped at 110-127
 5. @ replaced with _ (xndxrskor)
