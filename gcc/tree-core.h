@@ -755,6 +755,7 @@ enum tree_index : unsigned {
   TI_BOOLEAN_TRUE,
 
   TI_FLOAT_TYPE,
+  TI_PL8_TYPE,
   TI_DOUBLE_TYPE,
   TI_LONG_DOUBLE_TYPE,
 

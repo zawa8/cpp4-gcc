@@ -4657,6 +4657,7 @@ tree_strip_any_location_wrapper (tree exp)
 #define null_pointer_node		global_trees[TI_NULL_POINTER]
 
 #define float_type_node			global_trees[TI_FLOAT_TYPE]
+#define pl8_type_node			global_trees[TI_PL8_TYPE]
 #define double_type_node		global_trees[TI_DOUBLE_TYPE]
 #define long_double_type_node		global_trees[TI_LONG_DOUBLE_TYPE]
 #define bfloat16_type_node		global_trees[TI_BFLOAT16_TYPE]
