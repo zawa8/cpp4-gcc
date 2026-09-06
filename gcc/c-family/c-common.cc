@@ -4585,7 +4585,7 @@ c_common_nodes_and_builtins (void)
     TREE_TYPE (identifier_global_value (get_identifier (PID_TYPE)));
 
   record_builtin_type (RID_FLOAT, NULL, float_type_node);
-  record_builtin_type (RID_PL8, NULL, float_type_node); 
+  record_builtin_type (RID_PL8, NULL, pl8_type_node); 
   record_builtin_type (RID_DOUBLE, NULL, double_type_node);
   record_builtin_type (RID_MAX, "long double", long_double_type_node);
 
