@@ -1,23 +1,61 @@
 # cpp4-gcc
 
-cpp4 compiler - GCC fork for hskii encoding.
+GCC fork for the **xskii4** encoding: the **c4** language (and later cpp4).
 
-## About
+> Source snapshot: GCC **17.0.0** development trunk (`gcc/BASE-VER`), branch `master`.
+> (Older text in this file said "GCC 5.4.0": that was wrong, the tree is current trunk.)
 
-cpp4 is a C++ variant that uses:
-- **cplong** instead of float (arbitrary-precision numbers)
-- **hskii hex digits** (L,Y,V,W,P,F)
-- **hskii programming symbols** (E,U,I,O,M,X,A,H)
+## What is c4
 
-## Key Features
+c4 is C, written in the **xskii4** encoding with the font `x4e.ttf`
+(built from `x4e.sfd` in <https://github.com/zawa8/xfont>), with these differences:
 
-- Float-less (no float/double)
-- Overflow-less (unlimited precision via cplong)
-- hskii phonetic encoding support
+1. **4 fingers + 1 thumb maths by default.** Numbers are base 16 by default:
+   `4*4 = 10 = 8+8`, and `10 = F+1 = P+2 = W+3 = V+4 = Y+5 = L+6`.
+   Hex digits 10..15 are the glyphs `L Y V W P F` (continuous after `0-9`).
+2. **No capital letters `A-Z`, no camelCase.** The byte range `A-Z` carries other glyphs
+   (see below), so identifiers cannot contain capitals.
+3. **snake_case only.** Identifiers are `[a-z0-9_]`.
+4. **Regex (regeks) is different**, because the metacharacters sit at other byte values in xskii4.
+
+Everything else (keywords, statements, types, preprocessor) is meant to stay as close to C as possible.
+
+## xskii4 in one table
+
+| bytes (ASCII value) | glyph shown by x4e.ttf | meaning in c4 |
+|---|---|---|
+| `0-9` (0x30-0x39) | `0-9` | digits 0-9 |
+| `:;<=>?` (0x3A-0x3F) | `L Y V W P F` | hex digits 10..15 |
+| `A-F` (0x41-0x46) | `: ; < = > ?` | punctuation shifted here |
+| `G-Z` (0x47-0x5A) | 20 programming symbols | see `Claude.md` |
+| `a-z` (0x61-0x7A) | `a-z` | letters, snake_case |
+
+Detailed spec, design decisions, roadmap and open questions: **[Claude.md](Claude.md)**
+(written so that a new Claude session can continue the work).
 
 ## Status
 
-Development in progress. Based on GCC 5.4.0.
+Early. Done: GCC trunk imported, design written down (`Claude.md`).
+Not done: everything in the roadmap (converter/linter tool, libcpp xskii4 mode, hex-default literals, headers, regex).
+See the roadmap in `Claude.md` and the older log in `progres.md`.
+
+## Files written by the project owner
+
+| file | what |
+|---|---|
+| `ascii5_hskii4.md` | older "hskii/4fskii" glyph table (different from xskii4, see Claude.md section 4) |
+| `pl8_float_heksflot.md` | pl8 / cplong vs float comparison |
+| `progres.md` | earlier development log (cpp4 + cplong idea) |
+| `simbxls_hski4.md` | empty placeholder |
+
+## References
+
+- Fonts and xskii4 tooling: <https://github.com/zawa8/xfont>
+- Keyboard: <https://github.com/zawa8/xNglobord>
+- Number system (Rust): <https://github.com/zawa8/plong>
+- hskii encoding: <https://github.com/zawa8/vskii_rust4>
+
+---
 
 # cplong
 
