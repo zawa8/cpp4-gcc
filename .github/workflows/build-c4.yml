@@ -1,0 +1,70 @@
+# roadmap phase 2: build cc1 (C only) of the cpp4-gcc tree and run the c4 tool tests.
+name: build-c4
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tools:
+    # fast job: python tools only, no compiler build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            tools
+            tests/c4
+      - run: python3 tests/c4/run_tests.py
+
+  cc1:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential flex bison texinfo ccache \
+            libgmp-dev libmpfr-dev libmpc-dev libzstd-dev zlib1g-dev
+
+      - name: ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ccache
+          key: ccache-${{ runner.os }}-${{ github.sha }}
+          restore-keys: ccache-${{ runner.os }}-
+
+      - name: configure (C only, no bootstrap)
+        run: |
+          mkdir build
+          cd build
+          ../configure \
+            --enable-languages=c \
+            --disable-bootstrap --disable-multilib --disable-nls \
+            --disable-libsanitizer --disable-libvtv --disable-libssp --disable-libquadmath \
+            --disable-libgomp --disable-libatomic --disable-lto --disable-plugin \
+            --with-pkgversion="cpp4-gcc" \
+            CC="ccache gcc" CXX="ccache g++"
+
+      - name: build cc1 and the driver (make all-gcc)
+        run: |
+          ccache -z
+          make -C build -j"$(nproc)" all-gcc MAKEINFO=true
+          ccache -s
+
+      - name: smoke test
+        run: |
+          build/gcc/xgcc -B build/gcc/ --version
+          build/gcc/cc1 --version
+          build/gcc/xgcc -B build/gcc/ -S -o /tmp/hello.s tests/c4/src/hello.c
+          grep -q hello /tmp/hello.s
+
+      - name: c4 tool tests
+        run: python3 tests/c4/run_tests.py
