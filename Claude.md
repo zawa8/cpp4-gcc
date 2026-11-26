@@ -32,6 +32,7 @@ Repo: <https://github.com/zawa8/cpp4-gcc> (branch `master`). Owner GitHub user: 
 - Identifiers the owner chose keep his spelling, e.g. `werify_utf.py`, `wersion`. Never "correct" them.
 - The owner reads short status messages. If a task runs long, send a one-line status, then continue.
 - Be honest about what is verified and what is guessed. Mark guesses as such (see section 9, open questions).
+- The owner has **no laptop, only an Android phone**: Claude does all repo work (edit, commit, push) and checks CI itself with the GitHub API (`api.github.com` is reachable with the token). The owner said (session 2) to reuse the token he pastes for pushes and that he does not want to revoke it; he does not want patch files to download, just commit + push.
 - Never write the GitHub token into any file, commit message, memory or log. The owner pastes a token in chat when
   a push is needed: use it inline for the single push (`git push https://x-access-token:<token>@github.com/zawa8/cpp4-gcc.git ...`),
   pipe output through `sed` to hide it, and tell the owner to revoke it afterwards.
@@ -144,7 +145,7 @@ Key insight: the difference between c4 and C is mostly **which byte means what**
 |---|---|---|
 | 0 | docs, tag `1st_wersion_by_claude` | this file, readme.md (done in session 1) |
 | 1 (**done, session 2**) | tooling in `tools/x4/` : `x4conv.py` (ASCII-C <-> xskii4 bytes, incl. decimal<->hex literal conversion), `x4lint.py` (capitals, camelCase) , sample programs `tests/c4/*.c4` | lets us write c4 test code without typing in the special font |
-| 2 (**workflow written, session 2, not yet run**) | build setup: get `cc1` (C only) building. Sandbox has 1 core, 3 GB RAM, ~8 GB free disk, no gmp/mpfr/mpc headers: use a GitHub Actions workflow (`.github/workflows/build-c4.yml`, ubuntu, cached) instead of building locally; configure `--enable-languages=c --disable-bootstrap --disable-multilib --disable-nls --disable-libsanitizer` | green CI build of unmodified trunk |
+| 2 (**done, session 2: CI green**) | build setup: get `cc1` (C only) building. Sandbox has 1 core, 3 GB RAM, ~8 GB free disk, no gmp/mpfr/mpc headers: use a GitHub Actions workflow (`.github/workflows/build-c4.yml`, ubuntu, cached) instead of building locally; configure `--enable-languages=c --disable-bootstrap --disable-multilib --disable-nls --disable-libsanitizer` | green CI build of unmodified trunk |
 | 3 | libcpp xskii4 mode: option plumbing, byte class table, lexer paths, identifier rule | hello-world c4 compiles with `-fxskii4` |
 | 4 | numbers: default radix 16, prefixes, hex digit bytes 0x3A-0x3F, float literals decision | `4*4==10` test passes |
 | 5 | `gcc.c4` testsuite + converter round-trip tests in CI | regression safety |
@@ -187,6 +188,7 @@ Rule of thumb: every phase ends with something that runs and a test, then update
   golden raw `.c4` files, readable `view/*.c4v`, `run_tests.py`, 100+ checks, all passing; round trip c4 -> C compiled with host gcc 13 prints identical output).
   Glyph check failed (section 3). Assumptions used by the tools are listed in `tools/x4/README.md`. Next: phase 2 (CI build of cc1), font fix in xfont.
 - 2026-11-26 (session 2, later): phase 1 pushed (f4cef62b8). Wrote `.github/workflows/build-c4.yml` (job `tools` = python tests, job `cc1` = configure C-only + `make all-gcc` + smoke test). It is **unverified**: first run on GitHub may need fixes (configure flags, deps). Next session: read the Actions log, fix, then phase 3.
+- 2026-11-26 (session 2, later 3): **CI verified green** (run for cf908ce45: job `tools` 7 s, job `cc1` ~14 min: configure, `make all-gcc`, smoke test, c4 tests all success). Check runs with `GET /repos/zawa8/cpp4-gcc/actions/runs` and `/runs/<id>/jobs`.
 - 2026-11-26 (session 2, later 2): wrote `docs/c4/phase3-plan.md` (libcpp lexer analysis, per-buffer mode design, trigraph trap `??` = digits FF, test plan). No libcpp code changed. Waiting for CI result and answers to questions 11-13.
 
 - 2026-11-26 (end of session 1): owner accepted all proposals in sections 6-7. Next session starts at roadmap phase 1 (tools/x4/ converter + linter)
