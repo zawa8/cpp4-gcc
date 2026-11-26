@@ -103,7 +103,7 @@ the hskii/4fskii table is an older experiment. Do not implement the hskii table 
   - `gcc/testsuite/` : add a `gcc.c4/` directory for c4 tests.
 - The earlier cpp4 plan targeted `gcc/cp/` (C++). c4 is C, so the first target is `libcpp` + `gcc/c/`.
 
-## 6. Design (proposal from session 1, owner may change it)
+## 6. Design (proposal from session 1, **accepted by the owner** in session 1: "your proposals/recommendations/suggestions are best"; he may still change details)
 
 Key insight: the difference between c4 and C is mostly **which byte means what**. So do **not** translate the whole input to ASCII
 (string/char literal bytes would then be wrong at run time, and diagnostics would show translated text). Instead:
@@ -128,7 +128,7 @@ Key insight: the difference between c4 and C is mostly **which byte means what**
 7. Floating point: c4 keeps `float`/`double` (owner: "int float every thing in hexadecimal"), only the spelling is hex by default.
    GCC already has hex-float machinery (`0x1.8p3`) in `libcpp/expr.cc cpp_classify_number` and `real.cc`; c4 mostly reuses it with radix 16 as default.
    **cplong** is **out of scope** (confirmed by the owner, session 1).
-   **IEEE 754 (Claude's recommendation, owner asked "should we consider IEEE 754", answer pending):** yes. IEEE 754 binary32/binary64 is the
+   **IEEE 754 (decided: accepted by the owner):** yes. IEEE 754 binary32/binary64 is the
    *storage and arithmetic format*; hex vs decimal is only the *spelling* of literals and of printed output, so the two do not conflict.
    Reasons: hardware and GCC (`real.cc`, soft-float, libm, ABI) already do it; hex literals convert **exactly** (16 = 2^4, `1.8` is exactly 1.5,
    a `double` has 52 fraction bits = 13 hex digits, no rounding), while `0d0.1` is inexact; default printing in hex round-trips exactly.
@@ -170,13 +170,16 @@ Rule of thumb: every phase ends with something that runs and a test, then update
 5. Do the 20 symbols in bytes G-Z become single-glyph operators in c4 (e.g. `!=`, `<=`, `>=`, `&&`, `||`, `->`)? Which of the two spellings is allowed?
 6. Floating point is kept and hex by default (answered). Still open: exponent marker (`e`? `p`?) and is the exponent itself base 16, base 2, or base 10-in-hex?
    What does `printf` show for a `float` by default (hex fraction, e.g. `1.8`)?
-   Also: confirm IEEE 754 binary32/binary64 as the storage format (section 6 item 7).
+   (IEEE 754 binary32/binary64 as storage format: accepted. `p` = power of 2 and optional `e` = power of 16: accepted as proposed. Octal/binary prefixes `0o`/`0b`: accepted as proposed.)
 7. Runtime text: should c4 programs print xskii4 bytes (so output displays correctly in the x4e font), i.e. no translation at run time?
 8. Name of the final driver/binaries: `gcc4`, `c4`, `cpp4`? Suffix `.c4`?
 9. Is C++ (cpp4, `gcc/cp/`) planned after c4, or replaced by c4?
 10. Regex ("regeks"): POSIX-like syntax with moved metacharacters, or a new syntax?
 
 ## 10. Session log
+
+- 2026-11-26 (end of session 1): owner accepted all proposals in sections 6-7. Next session starts at roadmap phase 1 (tools/x4/ converter + linter)
+  together with the cheap glyph check from section 3, then phase 2 (CI build).
 
 - 2026-11-26 (session 1, later 2): cplong out of scope (confirmed), decimal prefix `0d`, `float a=1.8` = decimal 1.5; IEEE 754 recommendation written down.
 - 2026-11-26 (session 1, later): owner decided that int, float, everything is hexadecimal by default (`int a=V ;` is 12).
