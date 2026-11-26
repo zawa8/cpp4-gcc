@@ -30,6 +30,8 @@ Everything else (keywords, statements, types, preprocessor) is meant to stay as 
 | `G-Z` (0x47-0x5A) | 20 programming symbols | see `Claude.md` |
 | `a-z` (0x61-0x7A) | `a-z` | letters, snake_case |
 
+Why these choices (hex digits, no capitals, `x` = अ): **[benefits_of_xskii4_c4.md](benefits_of_xskii4_c4.md)**.
+
 Detailed spec, design decisions, roadmap and open questions: **[Claude.md](Claude.md)**
 (written so that a new Claude session can continue the work).
 
