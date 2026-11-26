@@ -15,7 +15,8 @@ c4 is "almost normal C" with four differences (given by the owner):
    So numbers are **base 16 by default**, hex digits 10..15 are `L Y V W P F`
    (L=10, Y=11, V=12, W=13, P=14, F=15).
    **Decided by the owner (session 1): by default `int`, `float`, everything is hexadecimal.**
-   Example: `int a=V ;` means a = 12 (8+4). In raw xskii4 bytes (assuming the shift in section 3) this line is
+   Example: `int a=V ;` means a = 12 (8+4). Also `float a=1.8 ;` // a = `0d1.5` (decimal 1.5): floats are written in hex by default,
+   and the prefix **`0d`** marks a decimal literal (owner's own example, session 1). In raw xskii4 bytes (assuming the shift in section 3) this line is
    `int a` + 0x44 (`=`) + 0x3C (shown as `V`) + 0x42 (`;`).
 2. c4 does **not support capital case `A-Z`** and does not support **camelCase**.
 3. c4 supports **only snake_case**.
@@ -126,7 +127,14 @@ Key insight: the difference between c4 and C is mostly **which byte means what**
    Start with a thin `libc4` wrapper over glibc; real regex support (item 4 of the goal) comes after the compiler core works.
 7. Floating point: c4 keeps `float`/`double` (owner: "int float every thing in hexadecimal"), only the spelling is hex by default.
    GCC already has hex-float machinery (`0x1.8p3`) in `libcpp/expr.cc cpp_classify_number` and `real.cc`; c4 mostly reuses it with radix 16 as default.
-   **cplong** (the older "float-less, overflow-less" idea, see `readme.md` below the line) is out of scope for c4 v1 unless the owner says otherwise.
+   **cplong** is **out of scope** (confirmed by the owner, session 1).
+   **IEEE 754 (Claude's recommendation, owner asked "should we consider IEEE 754", answer pending):** yes. IEEE 754 binary32/binary64 is the
+   *storage and arithmetic format*; hex vs decimal is only the *spelling* of literals and of printed output, so the two do not conflict.
+   Reasons: hardware and GCC (`real.cc`, soft-float, libm, ABI) already do it; hex literals convert **exactly** (16 = 2^4, `1.8` is exactly 1.5,
+   a `double` has 52 fraction bits = 13 hex digits, no rounding), while `0d0.1` is inexact; default printing in hex round-trips exactly.
+   Not recommended: a base-16 float format (IBM hex float) or cplong, they would need a new ABI/libm and give up hardware speed.
+   Proposal for literals: `1.8` (hex mantissa), `p` exponent = power of **2** like C99 hex floats (`1.8p3` = 1.5*2^3), exponent digits also hex;
+   `0d1.5` decimal; optional `e` exponent = power of 16 (decide, section 9).
 
 ## 7. Roadmap
 
@@ -158,10 +166,11 @@ Rule of thumb: every phase ends with something that runs and a test, then update
 1. xskii4 vs hskii4/4fskii: confirm that **xskii4 + x4e.ttf** (xfont repo) is the target and `ascii5_hskii4.md` is legacy (section 4).
 2. Exact byte placement of the shifted punctuation: is it `A:` `B;` `C<` `D=` `E>` `F?` (in this order)?
 3. Are the other ASCII punctuation bytes (parentheses, braces, `+ - * / % & | ^ ~ ! # " '` ...) unchanged in xskii4?
-4. Number syntax: base-16 default with which prefixes for decimal/octal/binary? Are `L Y V W P F` the only hex digit letters (bytes 0x3A-0x3F)?
+4. Number syntax: decimal prefix is `0d` (owner example). Still open: octal and binary prefixes (`0o`? `0b`?), and are `L Y V W P F` the only hex digit letters (bytes 0x3A-0x3F)?
 5. Do the 20 symbols in bytes G-Z become single-glyph operators in c4 (e.g. `!=`, `<=`, `>=`, `&&`, `||`, `->`)? Which of the two spellings is allowed?
 6. Floating point is kept and hex by default (answered). Still open: exponent marker (`e`? `p`?) and is the exponent itself base 16, base 2, or base 10-in-hex?
    What does `printf` show for a `float` by default (hex fraction, e.g. `1.8`)?
+   Also: confirm IEEE 754 binary32/binary64 as the storage format (section 6 item 7).
 7. Runtime text: should c4 programs print xskii4 bytes (so output displays correctly in the x4e font), i.e. no translation at run time?
 8. Name of the final driver/binaries: `gcc4`, `c4`, `cpp4`? Suffix `.c4`?
 9. Is C++ (cpp4, `gcc/cp/`) planned after c4, or replaced by c4?
@@ -169,6 +178,7 @@ Rule of thumb: every phase ends with something that runs and a test, then update
 
 ## 10. Session log
 
+- 2026-11-26 (session 1, later 2): cplong out of scope (confirmed), decimal prefix `0d`, `float a=1.8` = decimal 1.5; IEEE 754 recommendation written down.
 - 2026-11-26 (session 1, later): owner decided that int, float, everything is hexadecimal by default (`int a=V ;` is 12).
 
 - 2026-11-26 (session 1): explored repo (GCC 17.0.0 trunk, single commit), read xfont xskii4 docs, corrected readme.md, wrote this file,
