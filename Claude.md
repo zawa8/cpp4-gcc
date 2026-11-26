@@ -177,6 +177,9 @@ Rule of thumb: every phase ends with something that runs and a test, then update
 8. Name of the final driver/binaries: `gcc4`, `c4`, `cpp4`? Suffix `.c4`?
 9. Is C++ (cpp4, `gcc/cp/`) planned after c4, or replaced by c4?
 10. Regex ("regeks"): POSIX-like syntax with moved metacharacters, or a new syntax?
+11. Mode switch: xskii4 only for files with suffix `.c4`/`.h4` (everything else, e.g. `/usr/include/stdio.h`, stays ASCII)? See `docs/c4/phase3-plan.md`.
+12. Token spelling for `#x`, `##` and `-E` output: ASCII (recommended) or xskii4 bytes?
+13. Diagnostics: show source lines raw (x4e font) or translated?
 
 ## 10. Session log
 
@@ -184,6 +187,7 @@ Rule of thumb: every phase ends with something that runs and a test, then update
   golden raw `.c4` files, readable `view/*.c4v`, `run_tests.py`, 100+ checks, all passing; round trip c4 -> C compiled with host gcc 13 prints identical output).
   Glyph check failed (section 3). Assumptions used by the tools are listed in `tools/x4/README.md`. Next: phase 2 (CI build of cc1), font fix in xfont.
 - 2026-11-26 (session 2, later): phase 1 pushed (f4cef62b8). Wrote `.github/workflows/build-c4.yml` (job `tools` = python tests, job `cc1` = configure C-only + `make all-gcc` + smoke test). It is **unverified**: first run on GitHub may need fixes (configure flags, deps). Next session: read the Actions log, fix, then phase 3.
+- 2026-11-26 (session 2, later 2): wrote `docs/c4/phase3-plan.md` (libcpp lexer analysis, per-buffer mode design, trigraph trap `??` = digits FF, test plan). No libcpp code changed. Waiting for CI result and answers to questions 11-13.
 
 - 2026-11-26 (end of session 1): owner accepted all proposals in sections 6-7. Next session starts at roadmap phase 1 (tools/x4/ converter + linter)
   together with the cheap glyph check from section 3, then phase 2 (CI build).
