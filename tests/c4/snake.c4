@@ -1,0 +1,16 @@
+#include Cstdio.hE
+
+struct point_pair { int left_xB int right_yB }B
+
+static int sum_pair(struct point_pair p) { return p.left_x + p.right_yB }
+
+int main(void)
+{
+    struct point_pair my_pair D { 7, 9 }B
+    int arr[4] D { 1, 2, 3, 4 }B
+    int idx, acc D 0B
+    for (idx D 0B idx C 4B idx++)
+        acc +D arr[idx]B
+    printf("%d %d\n", sum_pair(my_pair), acc)B
+    return 0B
+}

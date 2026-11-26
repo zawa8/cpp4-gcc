@@ -1,7 +1,7 @@
 # Claude.md - cpp4-gcc / gcc4 / c4 compiler
 
 This file is the hand-over for a new Claude session. Read it fully before touching code.
-Last updated: 2026-11-26 (session 1). Keep this file up to date at the end of every session.
+Last updated: 2026-11-26 (session 2). Keep this file up to date at the end of every session.
 
 ## 1. Goal
 
@@ -71,8 +71,10 @@ Facts:
   digits only inside numbers, they cannot start or continue an identifier unless the owner says otherwise).
 - All other printable ASCII bytes (`( ) [ ] { } + - * / % & | ^ ~ ! # " ' , . \ _` ...) are assumed unchanged.
   **Unverified**: confirm against `x4_chars_map.csv`/`x4e.sfd` before relying on it.
-- TODO (cheap, do it first): render glyph slots 0x3A-0x46 of `x4e.sfd` and confirm they really show `L Y V W P F : ; < = > ?`.
-  If not, fix the font script before building any compiler logic on it.
+- Glyph check done in session 2 (rendered `xfont/notosfd/x4e.sfd` at its current head with fontforge): **FAILED**.
+  Slots 0x3A-0x3F do show digit glyphs (a pound-like L, Y, V, W, P, F), but slots 0x41-0x45 still show other shapes (not `: ; < = >`)
+  and slot 0x46 has **no glyph at all**. So the shifted punctuation is not in the font yet. Fixing it is a font task in the `xfont` repo
+  (and needs open question 2 answered: exact byte order). The tools in `tools/x4/` only use bytes, so they do not depend on it.
 
 ## 4. Do not confuse: hskii / 4fskii / xskii4
 
@@ -141,7 +143,7 @@ Key insight: the difference between c4 and C is mostly **which byte means what**
 | phase | work | deliverable |
 |---|---|---|
 | 0 | docs, tag `1st_wersion_by_claude` | this file, readme.md (done in session 1) |
-| 1 | tooling in `tools/x4/` : `x4conv.py` (ASCII-C <-> xskii4 bytes, incl. decimal<->hex literal conversion), `x4lint.py` (capitals, camelCase) , sample programs `tests/c4/*.c4` | lets us write c4 test code without typing in the special font |
+| 1 (**done, session 2**) | tooling in `tools/x4/` : `x4conv.py` (ASCII-C <-> xskii4 bytes, incl. decimal<->hex literal conversion), `x4lint.py` (capitals, camelCase) , sample programs `tests/c4/*.c4` | lets us write c4 test code without typing in the special font |
 | 2 | build setup: get `cc1` (C only) building. Sandbox has 1 core, 3 GB RAM, ~8 GB free disk, no gmp/mpfr/mpc headers: use a GitHub Actions workflow (`.github/workflows/build-c4.yml`, ubuntu, cached) instead of building locally; configure `--enable-languages=c --disable-bootstrap --disable-multilib --disable-nls --disable-libsanitizer` | green CI build of unmodified trunk |
 | 3 | libcpp xskii4 mode: option plumbing, byte class table, lexer paths, identifier rule | hello-world c4 compiles with `-fxskii4` |
 | 4 | numbers: default radix 16, prefixes, hex digit bytes 0x3A-0x3F, float literals decision | `4*4==10` test passes |
@@ -177,6 +179,10 @@ Rule of thumb: every phase ends with something that runs and a test, then update
 10. Regex ("regeks"): POSIX-like syntax with moved metacharacters, or a new syntax?
 
 ## 10. Session log
+
+- 2026-11-26 (session 2): roadmap phase 1 done. Added `tools/x4/` (`x4lib.py`, `x4conv.py`, `x4lint.py`, README.md) and `tests/c4/` (5 sample programs in `src/`,
+  golden raw `.c4` files, readable `view/*.c4v`, `run_tests.py`, 100+ checks, all passing; round trip c4 -> C compiled with host gcc 13 prints identical output).
+  Glyph check failed (section 3). Assumptions used by the tools are listed in `tools/x4/README.md`. Next: phase 2 (CI build of cc1), font fix in xfont.
 
 - 2026-11-26 (end of session 1): owner accepted all proposals in sections 6-7. Next session starts at roadmap phase 1 (tools/x4/ converter + linter)
   together with the cheap glyph check from section 3, then phase 2 (CI build).

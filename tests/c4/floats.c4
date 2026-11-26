@@ -1,0 +1,16 @@
+#include Cstdio.hE
+
+int main(void)
+{
+    double a D 1.8B         /* exact: 1.8 in c4 */
+    double b D 0.8B
+    double c D 2.4B
+    double d D 5=<.0B       /* 1500.0 exact */
+    double e D 0d0.1B         /* not exact in hex digits: stays 0d0.1 */
+    float f D 3.<fB
+    double g D 1.8p3B     /* hex float, exponent is decimal in C */
+    double h D 1p-2B
+    double i D 0d1e-3B        /* not dyadic: 0d1e-3 */
+    printf("%g %g %g %g %g %g %g %g %g\n", a, b, c, d, e, (double)f, g, h, i)B
+    return 0B
+}

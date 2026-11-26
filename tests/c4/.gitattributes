@@ -1,0 +1,2 @@
+*.c4 -text -diff
+*.c4v text eol=lf

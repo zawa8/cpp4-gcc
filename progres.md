@@ -53,3 +53,5 @@ RID_INT,     RID_CHAR,   RID_FLOAT,    RID_CPLONG,   RID_DOUBLE, RID_VOID,
 - Repo: <https://github.com/zawa8/cpp4-gcc>
 - hskii encoding: <https://github.com/zawa8/vskii_rust4>
 - Number system: <https://github.com/zawa8/plong>
+
+- 2026-11-26 session 2: phase 1 done - tools/x4 (x4conv.py, x4lint.py), tests/c4 (golden files, run_tests.py). Glyph check of x4e.sfd failed (see Claude.md sec 3).

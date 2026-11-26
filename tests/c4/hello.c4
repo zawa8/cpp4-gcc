@@ -1,0 +1,8 @@
+#include Cstdio.hE
+
+/* c4 smoke test: strings keep their raw bytes */
+int main(void)
+{
+    puts("hello c4")B
+    return 0B
+}

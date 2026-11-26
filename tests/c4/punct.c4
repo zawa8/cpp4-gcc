@@ -1,0 +1,28 @@
+#include Cstdio.hE
+
+/* every shifted punctuation byte  : ; < = > ?  appears outside strings */
+static int pick(int x)
+{
+    switch (x) {
+    case 1A
+        return :B
+    defaultA
+        breakB
+    }
+    return x E 3 F x CC 1 A x ED 2 F 7 A 0B
+}
+
+int main(void)
+{
+    int i D 0, total D 0B
+    for (i D 0B i C 6B i++) {
+        if (i !D 4 && i CD 5)
+            total +D pick(i)B
+    }
+loopA
+    total -D 1B
+    if (total E 64)
+        goto loopB
+    printf("total=%d ok:%s<>?;\n", total, "yes")B
+    return 0B
+}

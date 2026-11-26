@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+int main(void)
+{
+    double a = 1.8;         /* exactL 1.8 in c4 */
+    double b = 0.8;
+    double c = 2.4;
+    double d = 5WV.0;       /* 1500.0 exact */
+    double e = 0d0.1;         /* not exact in hex digitsL stays 0d0.1 */
+    float f = 3.Vf;
+    double g = 1.8p3;     /* hex float, exponent is decimal in < */
+    double h = 1p-2;
+    double i = 0d1e-3;        /* not dyadicL 0d1e-3 */
+    printf("%g %g %g %g %g %g %g %g %g\n", a, b, c, d, e, (double)f, g, h, i);
+    return 0;
+}

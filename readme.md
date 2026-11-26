@@ -35,8 +35,8 @@ Detailed spec, design decisions, roadmap and open questions: **[Claude.md](Claud
 
 ## Status
 
-Early. Done: GCC trunk imported, design written down (`Claude.md`).
-Not done: everything in the roadmap (converter/linter tool, libcpp xskii4 mode, hex-default literals, headers, regex).
+Early. Done: GCC trunk imported, design written down (`Claude.md`), phase 1 tools: converter + linter in `tools/x4/`, tests in `tests/c4/` (`python3 tests/c4/run_tests.py`).
+Not done: CI build, libcpp xskii4 mode, hex-default literals, headers, regex.
 See the roadmap in `Claude.md` and the older log in `progres.md`.
 
 ## Files written by the project owner
