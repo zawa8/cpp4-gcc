@@ -14,6 +14,9 @@ c4 is "almost normal C" with four differences (given by the owner):
    `4*4 = 10 = 8+8 = 10 = F+1 = P+2 = W+3 = V+4 = Y+5 = L+6`.
    So numbers are **base 16 by default**, hex digits 10..15 are `L Y V W P F`
    (L=10, Y=11, V=12, W=13, P=14, F=15).
+   **Decided by the owner (session 1): by default `int`, `float`, everything is hexadecimal.**
+   Example: `int a=V ;` means a = 12 (8+4). In raw xskii4 bytes (assuming the shift in section 3) this line is
+   `int a` + 0x44 (`=`) + 0x3C (shown as `V`) + 0x42 (`;`).
 2. c4 does **not support capital case `A-Z`** and does not support **camelCase**.
 3. c4 supports **only snake_case**.
 4. **Regex ("regeks") in c4 is different**, as per xskii4 (the regex metacharacters live at other byte values).
@@ -112,15 +115,18 @@ Key insight: the difference between c4 and C is mostly **which byte means what**
    - numbers: digits are bytes 0x30-0x3F; radix default 16 (see below).
    - string and character literal contents stay **raw bytes** (no translation).
    - the preprocessor `#` and quotes are plain ASCII unless the owner says otherwise.
-3. Number literals (needs owner decisions, section 9): default radix 16, so `10` = 16 decimal, `4*4` prints/means `10`.
+3. Number literals (prefixes still need owner decisions, section 9): default radix 16 for **all** literals, integer **and floating**,
+   so `10` = 16 decimal, `V` = 12, `4*4` means `10`, and `1.8` = 1.5 decimal (fraction digits are hex, 1/16, 1/256 ...).
+   Because hex digits are `L Y V W P F` (not `a-f`), the letters `e`/`p` are free to be exponent markers in float literals (proposal; see section 9).
    Suggested prefixes: `0d` decimal, `0o` octal, `0b` binary, no prefix = hex. `libcpp/expr.cc cpp_classify_number` and
    `cpp_interpret_integer` are the places; `-Wc4-radix` style warnings help porting.
 4. Lint pass ("snake_case only, no capitals") is mostly free from point 2; add clear errors for bytes 0x47-0x5A used as letters.
 5. Keep `sizeof`, array sizes, `#define` values etc. semantically the same C rules, only literal spelling changes.
 6. Runtime library: c4 programs need headers in xskii4 (`stdio.h4`, ...) and a printf/scanf that prints/reads base 16 by default.
    Start with a thin `libc4` wrapper over glibc; real regex support (item 4 of the goal) comes after the compiler core works.
-7. Floating point and **cplong** (the older "float-less, overflow-less" idea, see `readme.md` below the line) are **out of scope for c4 v1**
-   unless the owner says otherwise; c4 v1 keeps normal C float/double.
+7. Floating point: c4 keeps `float`/`double` (owner: "int float every thing in hexadecimal"), only the spelling is hex by default.
+   GCC already has hex-float machinery (`0x1.8p3`) in `libcpp/expr.cc cpp_classify_number` and `real.cc`; c4 mostly reuses it with radix 16 as default.
+   **cplong** (the older "float-less, overflow-less" idea, see `readme.md` below the line) is out of scope for c4 v1 unless the owner says otherwise.
 
 ## 7. Roadmap
 
@@ -154,13 +160,16 @@ Rule of thumb: every phase ends with something that runs and a test, then update
 3. Are the other ASCII punctuation bytes (parentheses, braces, `+ - * / % & | ^ ~ ! # " '` ...) unchanged in xskii4?
 4. Number syntax: base-16 default with which prefixes for decimal/octal/binary? Are `L Y V W P F` the only hex digit letters (bytes 0x3A-0x3F)?
 5. Do the 20 symbols in bytes G-Z become single-glyph operators in c4 (e.g. `!=`, `<=`, `>=`, `&&`, `||`, `->`)? Which of the two spellings is allowed?
-6. Floating point: keep C float/double in c4 v1, or "float-less" with cplong from the start?
+6. Floating point is kept and hex by default (answered). Still open: exponent marker (`e`? `p`?) and is the exponent itself base 16, base 2, or base 10-in-hex?
+   What does `printf` show for a `float` by default (hex fraction, e.g. `1.8`)?
 7. Runtime text: should c4 programs print xskii4 bytes (so output displays correctly in the x4e font), i.e. no translation at run time?
 8. Name of the final driver/binaries: `gcc4`, `c4`, `cpp4`? Suffix `.c4`?
 9. Is C++ (cpp4, `gcc/cp/`) planned after c4, or replaced by c4?
 10. Regex ("regeks"): POSIX-like syntax with moved metacharacters, or a new syntax?
 
 ## 10. Session log
+
+- 2026-11-26 (session 1, later): owner decided that int, float, everything is hexadecimal by default (`int a=V ;` is 12).
 
 - 2026-11-26 (session 1): explored repo (GCC 17.0.0 trunk, single commit), read xfont xskii4 docs, corrected readme.md, wrote this file,
   created tag `1st_wersion_by_claude`. No compiler code written yet.
