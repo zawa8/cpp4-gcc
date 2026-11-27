@@ -3902,6 +3902,69 @@ _cpp_get_fresh_line (cpp_reader *pfile)
 }
 
 
+/* c4: rewrite an xskii4 file buffer in place so that the ordinary lexer can
+   read it.  The translation is 1:1 per byte (columns, line notes and file
+   offsets stay valid) and is only applied to code, never to the contents of
+   string literals, character literals and comments, which keep their raw
+   bytes:
+
+     0x3A-0x3F (hex digits L Y V W P F)   -> 0x41-0x46 'A'-'F'  (= ASCII hex
+                                            digits with the same values 10..15)
+     0x41-0x46 (shifted : ; < = > ?)      -> 0x3A-0x3F ':' ';' '<' '=' '>' '?'
+     0x47-0x5A (20 symbols, undecided)    -> '`' (becomes a stray CPP_OTHER)
+
+   So in translated code a capital letter can only be a hex digit A-F; c4 has
+   no capital letters otherwise.  The first two rows swap the two ranges.  */
+void
+_cpp_x4_translate (unsigned char *buf, size_t len)
+{
+  enum { CODE, STRING, CHARLIT, LINE_COMMENT, BLOCK_COMMENT } state = CODE;
+
+  for (size_t i = 0; i < len; i++)
+    {
+      unsigned char c = buf[i];
+      switch (state)
+	{
+	case CODE:
+	  if (c == '/' && i + 1 < len && buf[i + 1] == '/')
+	    state = LINE_COMMENT, i++;
+	  else if (c == '/' && i + 1 < len && buf[i + 1] == '*')
+	    state = BLOCK_COMMENT, i++;
+	  else if (c == '"')
+	    state = STRING;
+	  else if (c == '\'')
+	    state = CHARLIT;
+	  else if (c >= 0x3A && c <= 0x3F)
+	    buf[i] = c + 7;
+	  else if (c >= 0x41 && c <= 0x46)
+	    buf[i] = c - 7;
+	  else if (c >= 0x47 && c <= 0x5A)
+	    buf[i] = '`';
+	  break;
+
+	case STRING:
+	case CHARLIT:
+	  if (c == '\\')
+	    i++;		/* escaped byte, also backslash-newline */
+	  else if (c == '\n' || c == (state == STRING ? '"' : '\''))
+	    state = CODE;	/* closed, or unterminated at end of line */
+	  break;
+
+	case LINE_COMMENT:
+	  if (c == '\\')
+	    i++;		/* backslash-newline continues the comment */
+	  else if (c == '\n')
+	    state = CODE;
+	  break;
+
+	case BLOCK_COMMENT:
+	  if (c == '*' && i + 1 < len && buf[i + 1] == '/')
+	    state = CODE, i++;
+	  break;
+	}
+    }
+}
+
 #define IF_NEXT_IS(CHAR, THEN_TYPE, ELSE_TYPE)		\
   do							\
     {							\
@@ -4082,6 +4145,16 @@ _cpp_lex_direct (cpp_reader *pfile)
     case 'M': case 'N': case 'O': case 'P': case 'Q':
     case 'S': case 'T':           case 'V': case 'W': case 'X':
     case 'Y': case 'Z':
+      /* c4: in an xskii4 buffer a capital A-F is a hex digit (10..15) and
+	 starts a number such as the literal C (= V in the x4e font, 12).  */
+      if (__builtin_expect (buffer->xskii4, 0) && c <= 'F')
+	{
+	  struct normalize_state nst = INITIAL_NORMALIZE_STATE;
+	  result->type = CPP_NUMBER;
+	  lex_number (pfile, &result->val.str, &nst);
+	  warn_about_normalization (pfile, result, &nst, false);
+	  break;
+	}
       result->type = CPP_NAME;
       {
 	struct normalize_state nst = INITIAL_NORMALIZE_STATE;
@@ -4090,6 +4163,16 @@ _cpp_lex_direct (cpp_reader *pfile)
 	result->val.node.node = node;
 	identifier_diagnostics_on_lex (pfile, node);
 	warn_about_normalization (pfile, result, &nst, true);
+	/* c4: a hex digit glued to a name shows up as a capital letter.  */
+	if (__builtin_expect (buffer->xskii4, 0))
+	  for (const uchar *q = NODE_NAME (node); *q; q++)
+	    if (*q >= 'A' && *q <= 'Z')
+	      {
+		cpp_error (pfile, CPP_DL_ERROR,
+			   "hex digit glued to name \"%s\" (c4 names are lower case)",
+			   NODE_NAME (node));
+		break;
+	      }
       }
 
       /* Convert named operators to their proper types.  */
@@ -4298,7 +4381,9 @@ _cpp_lex_direct (cpp_reader *pfile)
 
     case '.':
       result->type = CPP_DOT;
-      if (ISDIGIT (*buffer->cur))
+      if (ISDIGIT (*buffer->cur)
+	  || (__builtin_expect (buffer->xskii4, 0)  /* c4: .C is a hex fraction */
+	      && *buffer->cur >= 'A' && *buffer->cur <= 'F'))
 	{
 	  struct normalize_state nst = INITIAL_NORMALIZE_STATE;
 	  result->type = CPP_NUMBER;

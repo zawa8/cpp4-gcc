@@ -379,6 +379,10 @@ struct cpp_buffer
      be far too noisy).  */
   bool warned_cplusplus_comments : 1;
 
+  /* c4: true if this buffer holds xskii4 text that _cpp_x4_translate has
+     already rewritten (so capitals A-F are hex digits).  */
+  bool xskii4 : 1;
+
   /* True if we don't process trigraphs and escaped newlines.  True
      for preprocessed input, command line directives, and _Pragma
      buffers.  */
@@ -811,6 +815,9 @@ extern struct op *_cpp_expand_op_stack (cpp_reader *);
 /* In lex.cc */
 extern void _cpp_process_line_notes (cpp_reader *, int);
 extern void _cpp_clean_line (cpp_reader *);
+/* c4: xskii4 support.  */
+extern void _cpp_x4_translate (unsigned char *, size_t);
+extern bool _cpp_file_xskii4_p (const struct _cpp_file *);
 extern bool _cpp_get_fresh_line (cpp_reader *);
 extern bool _cpp_skip_block_comment (cpp_reader *);
 extern cpp_token *_cpp_temp_token (cpp_reader *);

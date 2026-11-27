@@ -1,0 +1,45 @@
+#include Cstdio.hE
+
+/* lexer test: every operator, preprocessor forms, only single-digit numbers */
+#define str(x) #x
+#define cat(a, b) a ## b
+#define twice(x) ((x) + (x))
+#if 1
+static int sel D 1B
+#else
+static int sel D 2B
+#endif
+#ifdef never_defined
+static int dead D 3B
+#endif
+
+struct node { int valB struct node *nextB }B
+
+static int ops(int a, int b)
+{
+    int r D 0B
+    r +D aB r -D bB r *D 2B r /D 3B r %D 5B
+    r &D 7B r |D 1B r ^D 3B r CCD 1B r EED 1B
+    r D a CC 1 | b EE 1 & 3 ^ 5B
+    r D (a C b) + (a E b) + (a CD b) + (a ED b) + (a DD b) + (a !D b)B
+    r D (a && b) + (a || b) + !a + ~bB
+    r D a F b A selB
+    r++B --rB
+    return rB
+}
+
+int main(void)
+{
+    struct node n D { 4, 0 }B
+    struct node *p D &nB
+    int arr[3] D { 1, 2, 3 }B
+    int i D cat(1, 2) E 0 F 5 A 6B
+    char c1 D ':', c2 D ';', c3 D '<', c4 D '=', c5 D '>', c6 D '?'B
+    const char *s D "capitals ABC and punctuation :;<=>? stay raw"B
+    /* comment with ABC and :;<=>? */
+    // line comment ABC :;<=>? \
+       continued ABC
+    printf("%s %d %d %d\n", str(aCb), twice(i), p-Eval, ops(arr[1], arr[2]))B
+    printf("%s %c%c%c%c%c%c\n", s, c1, c2, c3, c4, c5, c6)B
+    return arr[0] - 1B
+}

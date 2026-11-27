@@ -75,7 +75,7 @@ def view_to_raw(text):
 
 C_TOKEN = re.compile(r'''
   (?P<ws>\s+)
- |(?P<lcom>//[^\n]*)
+ |(?P<lcom>//(?:\\\n|[^\n])*)
  |(?P<bcom>/\*.*?\*/)
  |(?P<str>(?:u8|u|U|L)?"(?:\\.|[^"\\\n])*")
  |(?P<chr>(?:u8|u|U|L)?'(?:\\.|[^'\\\n])*')
@@ -86,7 +86,7 @@ C_TOKEN = re.compile(r'''
 
 X4_TOKEN = re.compile(rb'''
   (?P<ws>[ \t\r\n\f\v]+)
- |(?P<lcom>//[^\n]*)
+ |(?P<lcom>//(?:\\\n|[^\n])*)
  |(?P<bcom>/\*.*?\*/)
  |(?P<str>(?:u8|u)?"(?:\\.|[^"\\\n])*")
  |(?P<chr>(?:u8|u)?'(?:\\.|[^'\\\n])*')

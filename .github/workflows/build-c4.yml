@@ -68,3 +68,6 @@ jobs:
 
       - name: c4 tool tests
         run: python3 tests/c4/run_tests.py
+
+      - name: c4 xskii4 lexer tests (phase 3)
+        run: python3 tests/c4/run_lexer_tests.py build/gcc/xgcc -B build/gcc/

@@ -380,6 +380,10 @@ struct cpp_options
      macro expansion.  */
   unsigned char discard_comments_in_macro_exp;
 
+  /* c4: nonzero means the main input file is xskii4 text (files with suffix
+     .c4 and .h4 are always xskii4).  */
+  unsigned char xskii4;
+
   /* Nonzero means process the ISO trigraph sequences.  */
   unsigned char trigraphs;
 

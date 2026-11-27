@@ -537,6 +537,10 @@ c_common_handle_option (size_t scode, const char *arg, HOST_WIDE_INT value,
       cpp_opts->preprocessed = value;
       break;
 
+    case OPT_fxskii4:		/* c4 */
+      cpp_opts->xskii4 = value;
+      break;
+
     case OPT_fdebug_cpp:
       cpp_opts->debug = value;
       break;

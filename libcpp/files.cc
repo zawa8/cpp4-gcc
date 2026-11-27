@@ -122,6 +122,9 @@ struct _cpp_file
   /* File loaded from #embed.  */
   bool embed : 1;
 
+  /* c4: contents are xskii4 text, already translated by _cpp_x4_translate.  */
+  bool xskii4 : 1;
+
   /* > 0: Known C++ Module header unit, <0: known not.  ==0, unknown  */
   int header_unit : 2;
 };
@@ -802,7 +805,28 @@ read_file_guts (cpp_reader *pfile, _cpp_file *file, location_t loc,
 				     &file->buffer_start,
 				     &file->st.st_size);
   file->buffer_valid = file->buffer;
+
+  /* c4: xskii4 files are rewritten once, in place, here.  Files with suffix
+     .c4/.h4 are always xskii4; with -fxskii4 the main file is too.  */
+  if (file->buffer_valid && pfile && !file->embed
+      && !CPP_OPTION (pfile, preprocessed))
+    {
+      const char *dot = strrchr (file->path, '.');
+      if ((dot && (!strcmp (dot, ".c4") || !strcmp (dot, ".h4")))
+	  || (CPP_OPTION (pfile, xskii4) && file == pfile->main_file))
+	{
+	  file->xskii4 = true;
+	  _cpp_x4_translate ((uchar *) file->buffer, file->st.st_size);
+	}
+    }
   return file->buffer_valid;
+}
+
+/* c4: accessor for the lexer.  */
+bool
+_cpp_file_xskii4_p (const _cpp_file *file)
+{
+  return file->xskii4;
 }
 
 /* Convenience wrapper around read_file_guts that opens the file if
@@ -986,6 +1010,7 @@ _cpp_stack_file (cpp_reader *pfile, _cpp_file *file, include_type type,
 		       CPP_OPTION (pfile, preprocessed)
 		       && !CPP_OPTION (pfile, directives_only));
   buffer->file = file;
+  buffer->xskii4 = file->xskii4;  /* c4 */
   buffer->sysp = sysp;
   buffer->to_free = file->buffer_start;
 
